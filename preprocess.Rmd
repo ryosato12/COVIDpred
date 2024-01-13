@@ -1,0 +1,74 @@
+---
+title: "Preprocess"
+output: html_document
+date: "2023-12-06"
+---
+
+```{r}
+wastewater <- read.csv('WWSCAN_selected_plants_all_targets_20231206.csv')
+# head(wastewater)
+wastewater$collection_date <- as.Date(wastewater$collection_date)
+class(wastewater$collection_date)
+```
+
+```{r}
+unique(wastewater$city)
+```
+
+```{r} 
+SoutheastSanFransiscoWastewater <- wastewater |> filter(city=='San Francisco, CA') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+
+OceansideWastewater <- wastewater |> filter(city=='San Francisco') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+
+HalfMoonBayWastewater <- wastewater |> filter(city=='Half Moon Bay') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+
+PacificaWastewater <- wastewater |> filter(city=='Pacifica') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+
+RedwoodCityWastewater <- wastewater |> filter(city=='Silicon Valley') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+
+SanMateoWastewater <- wastewater |> filter(city=='San Mateo') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+
+GilroyWastewater <- wastewater |> filter(city=='Gilroy') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+
+PaloAltoWastewater <- wastewater |> filter(city=='Palo Alto') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+
+SanJoseWastewater <- wastewater |> filter(city=='San Jose') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+
+SunnyvaleWastewater <- wastewater |> filter(city=='Sunnyvale') |> complete(city,collection_date=seq.Date(min(collection_date), max(collection_date), by='day')) |> select(collection_date,N_Gene_gc_g_dry_weight) |> mutate(N_Gene_gc_g_dry_weight=if_else(is.na(N_Gene_gc_g_dry_weight), 0, N_Gene_gc_g_dry_weight)) 
+```
+
+```{r}
+# San Francisco, San Mateo, Santa Clara
+idx <- c('date','county','population','confirmed_cases','confirmed_deaths')
+cases <- read.csv('cdph-county-cases-deaths.csv')
+cases$date <- as.Date(cases$date)
+# head(cases)
+SanFranciscoCases <- cases[cases$county=='San Francisco',idx]
+SanMateoCases <- cases[cases$county=='San Mateo',idx]
+SantaClaraCases <- cases[cases$county=='Santa Clara',idx]
+```
+
+```{r}
+# Export files
+write.csv(apply(SanFranciscoCases,2,rev), 'SanFranciscoCases.csv')
+write.csv(apply(SanMateoCases,2,rev), 'SanMateoCases.csv')
+write.csv(apply(SantaClaraCases,2,rev), 'SantaClaraCases.csv')
+
+write.csv(SoutheastSanFransiscoWastewater, 'SoutheastSanFransiscoWastewater.csv',row.names=FALSE)
+write.csv(OceansideWastewater, 'OceansideWastewater.csv',row.names=FALSE)
+write.csv(HalfMoonBayWastewater, 'HalfMoonBayWastewater.csv',row.names=FALSE)
+write.csv(PacificaWastewater, 'PacificaWastewater.csv',row.names=FALSE)
+write.csv(RedwoodCityWastewater, 'RedwoodCityWastewater.csv',row.names=FALSE)
+write.csv(SanMateoWastewater, 'SanMateoWastewater.csv',row.names=FALSE)
+write.csv(GilroyWastewater, 'GilroyWastewater.csv',row.names=FALSE)
+write.csv(PaloAltoWastewater, 'PaloAltoWastewater.csv',row.names=FALSE)
+write.csv(SanJoseWastewater, 'SanJoseWastewater.csv',row.names=FALSE)
+write.csv(SunnyvaleWastewater, 'SunnyvaleWastewater.csv',row.names=FALSE)
+``` 
+
+
+
+
+
+
+
